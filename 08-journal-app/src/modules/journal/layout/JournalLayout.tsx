@@ -1,3 +1,5 @@
+import 'animate.css';
+
 import { Box, Toolbar } from '@mui/material';
 import { ReactNode } from 'react';
 
@@ -12,7 +14,7 @@ const drawerWidth = 240;
 
 export const JournalLayout = ({ children }: JournalLayoutProps) => {
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box className="animate__animated animate__fadeIn animate__faster" sx={{ display: 'flex' }}>
       {/* Navbar */}
       <NavBar drawerWidth={drawerWidth} />
       {/* SideBar */}
