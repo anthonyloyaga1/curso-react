@@ -21,12 +21,12 @@ const formValidations = {
 
 export const RegisterPage = () => {
   const dispatch = useAppDispatch();
-  const { status, errorMessage } = useAppSelector((state) => state.auth);
+  const { error, status } = useAppSelector((state) => state.auth);
 
-  const isAuthenticated = useMemo(() => status === 'checking', [status]);
+  const isAuthenticated = useMemo(() => status === 'authenticated', [status]);
 
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const { email, password, displayName, onInputChange, formState, isFormValid, displayNameValid, emailValid, passwordValid } = useForm(
+  const { email, password, displayName, onInputChange, isFormValid, displayNameValid, emailValid, passwordValid } = useForm(
     formData,
     formValidations,
   );
@@ -36,7 +36,7 @@ export const RegisterPage = () => {
     setFormSubmitted(true);
 
     if (!isFormValid) return null;
-    dispatch(startCreatingUserWithEmailPassword(formState));
+    dispatch(startCreatingUserWithEmailPassword(email, password, displayName));
   };
 
   return (
@@ -87,8 +87,8 @@ export const RegisterPage = () => {
             <TextField label="Repetir contraseña" type="password" placeholder="Repetir constraseña" fullWidth></TextField>
           </Grid>
           <Grid container spacing={2} sx={{ mb: 1 }}>
-            <Grid item xs={12} display={errorMessage ? '' : 'none'}>
-              <Alert severity="error">{errorMessage}</Alert>
+            <Grid item xs={12} display={error ? '' : 'none'}>
+              <Alert severity="error">{error}</Alert>
             </Grid>
             <Grid item xs={12}>
               <Button type="submit" variant="contained" fullWidth disabled={isAuthenticated}>

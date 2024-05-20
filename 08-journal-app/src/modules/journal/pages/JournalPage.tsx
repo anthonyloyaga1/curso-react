@@ -1,28 +1,43 @@
-import { AddOutlined } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { Add } from '@mui/icons-material';
+import { Fab } from '@mui/material';
+import { useEffect } from 'react';
 
+import { useAppDispatch, useAppSelector } from '../../../common/hooks/useRedux';
+import { StartLoadingNotes, StartNewNote } from '../../../common/store/journal/journalThunks';
 import { JournalLayout } from '../layout/JournalLayout';
+import { NoteView } from '../views/NoteView';
 import { NothingSelectedView } from '../views/NothingSelectedView';
 
 export const JournalPage = () => {
+  const dispatch = useAppDispatch();
+  const { data, loading } = useAppSelector((state) => state.journal);
+
+  const noActiveNote = data && data.active != null && data.active.id === '';
+
+  const onClickNewNote = () => {
+    dispatch(StartNewNote());
+  };
+ 
+  useEffect(() => {
+    dispatch(StartLoadingNotes());
+  }, [dispatch]);
+
   return (
     <JournalLayout>
-      <NothingSelectedView />
-      {/* <NoteView /> */}
+      {noActiveNote ? <NothingSelectedView /> : <NoteView />}
 
-      <IconButton
-        size="large"
+      <Fab
+        disabled={loading}
+        onClick={onClickNewNote}
+        color="secondary"
         sx={{
-          color: 'white',
-          backgroundColor: 'error.main',
-          ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
           position: 'fixed',
           right: 50,
           bottom: 50,
         }}
       >
-        <AddOutlined sx={{ fontSize: 30 }} />
-      </IconButton>
+        <Add />
+      </Fab>
     </JournalLayout>
   );
 };

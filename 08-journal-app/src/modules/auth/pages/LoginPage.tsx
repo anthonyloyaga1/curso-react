@@ -1,3 +1,5 @@
+import 'animate.css';
+
 import { Google } from '@mui/icons-material';
 import { Alert, Button, Grid, Link, TextField, Typography } from '@mui/material';
 import { useMemo } from 'react';
@@ -7,16 +9,16 @@ import { useForm } from '../../../common/hooks/useForm';
 import { useAppDispatch, useAppSelector } from '../../../common/hooks/useRedux';
 import { startEmailPasswordSignIn, startGoogleSignIn } from '../../../common/store/auth/authThunks';
 import { AuthLayout } from '../layout/AuthLayout';
-import 'animate.css';
 
+const initialForm = { email: 'test1@gmail.com', password: '123456' };
 
 export const LoginPage = () => {
   const dispatch = useAppDispatch();
-  const { status, errorMessage } = useAppSelector((state) => state.auth);
+  const { status, error } = useAppSelector((state) => state.auth);
 
-  const { email, password, onInputChange } = useForm({ email: 'test1@gmail.com', password: '123456' });
+  const { email, password, onInputChange } = useForm(initialForm);
 
-  const isAuthenticated = useMemo(() => status === 'checking', [status]);
+  const isAuthenticated = useMemo(() => status === 'authenticated', [status]);
 
   const onSubmit = (event: any) => {
     event.preventDefault();
@@ -54,8 +56,8 @@ export const LoginPage = () => {
             ></TextField>
           </Grid>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} display={errorMessage ? '' : 'none'}>
-              <Alert severity="error">{errorMessage}</Alert>
+            <Grid item xs={12} display={error ? '' : 'none'}>
+              <Alert severity="error">{error}</Alert>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Button disabled={isAuthenticated} type="submit" variant="contained" fullWidth>

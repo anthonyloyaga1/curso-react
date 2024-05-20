@@ -1,14 +1,15 @@
-import { TurnedInNot } from '@mui/icons-material';
-import { Box, Divider, Drawer, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
+import { Box, Divider, Drawer, List, Toolbar, Typography } from '@mui/material';
 
 import { useAppSelector } from '../../../common/hooks/useRedux';
+import { SideBarItem } from './SideBarItem';
 
 interface NavBarProps {
   drawerWidth: number;
 }
 export const SideBar = ({ drawerWidth }: NavBarProps) => {
-  const { displayName } = useAppSelector((state) => state.auth);
-
+  const { displayName } = useAppSelector((state) => state.auth.data!);
+  const { notes, active } = useAppSelector((state) => state.journal.data);
+  
   return (
     <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
       <Drawer variant="permanent" open sx={{ display: { xs: 'block', '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth } } }}>
@@ -19,18 +20,8 @@ export const SideBar = ({ drawerWidth }: NavBarProps) => {
         </Toolbar>
         <Divider />
         <List>
-          {['Enero', 'Febrero', 'Marzo', 'Abril'].map((text) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <TurnedInNot />
-                </ListItemIcon>
-                <Grid container>
-                  <ListItemText primary={text} />
-                  <ListItemText secondary={'Lorem ipsum dolor sit'} />
-                </Grid>
-              </ListItemButton>
-            </ListItem>
+          {notes.map((note) => (
+            <SideBarItem note={note} key={note.id} />
           ))}
         </List>
       </Drawer>

@@ -1,58 +1,45 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-import { RootState } from '../store';
+import { UserInfo } from 'firebase/auth';
 
 export interface AuthState {
-  status?: string;
-  uid?: string | null;
-  email?: string | null;
-  displayName?: string | null;
-  photoURL?: string | null;
-  errorMessage?: any | null;
+  status: 'authenticated' | 'unauthenticated' | 'loading';
+  data: UserInfo | null;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: AuthState = {
-  status: 'checking',
-  uid: null,
-  email: null,
-  displayName: null,
-  photoURL: null,
-  errorMessage: null,
+  status: 'loading',
+  data: null,
+  loading: false,
+  error: null,
 };
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login: (state, { payload }: PayloadAction<AuthState>) => {
+    loginStart: (state) => {
+      state.status = 'loading';
+      state.loading = true;
+      state.error = null;
+    },
+    loginSuccess: (state, action: PayloadAction<UserInfo>) => {
       state.status = 'authenticated';
-      state.uid = payload.uid;
-      state.displayName = payload.displayName;
-      state.photoURL = payload.photoURL;
-      state.email = payload.email;
-      state.errorMessage = null;
+      state.loading = false;
+      state.data = action.payload;
+    },
+    loginFailure: (state, action: PayloadAction<string>) => {
+      state.status = 'unauthenticated';
+      state.loading = false;
+      state.error = action.payload;
     },
     logout: (state) => {
-      state.status = 'not-authenticated';
-      state.uid = null;
-      state.displayName = null;
-      state.photoURL = null;
-      state.email = null;
-      state.errorMessage = null;
-    },
-    logoutWithError: (state, { payload }: PayloadAction<{ errorMessage: string }>) => {
-      state.status = 'not-authenticated';
-      state.uid = null;
-      state.displayName = null;
-      state.photoURL = null;
-      state.email = null;
-      state.errorMessage = payload.errorMessage;
-    },
-    checkingCredentials: (state) => {
-      state.status = 'checking';
+      state.status = 'unauthenticated';
+      state.data = null;
+      state.loading = false;
+      state.error = null;
     },
   },
 });
-export const { login, logout, logoutWithError, checkingCredentials } = authSlice.actions;
-
-export const statusAuthentication = (state: RootState) => state.auth.status;
+export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.actions;
